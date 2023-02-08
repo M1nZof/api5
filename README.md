@@ -10,6 +10,14 @@
 pip install -r requirements.txt
 ```
 
+Переменные окружения:
+
+- SJ_KEY - ключ от API SuperJob
+
+```
+SJ_KEY=12asd34xcvdfg45
+```
+
 ### Как запустить
 
 ```
