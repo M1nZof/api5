@@ -120,7 +120,6 @@ if __name__ == '__main__':
     sj_key = os.environ['SJ_KEY']
 
     languages = ['Python', 'JS', 'Java', 'Ruby', 'PHP', 'C', 'CSS', 'GO']
-    quantity_of_vacancies = {}
     vacancies_salaries_hh_and_sj = {
         'HeadHunter Moscow': {},
         'SuperJob Moscow': {}
