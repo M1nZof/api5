@@ -5,7 +5,7 @@ from terminaltables import AsciiTable
 from dotenv import load_dotenv
 
 
-def vacancy_request_hh(vacancy, url):
+def get_vacansies_hh(language, url):
     page = 0
     pages_number = 100
     vacancies = []
@@ -13,7 +13,7 @@ def vacancy_request_hh(vacancy, url):
     while page < pages_number:
         payload = {
             'page': page,
-            'text': vacancy
+            'text': language
         }
         page_response = requests.get(url, params=payload)
         page_response.raise_for_status()
@@ -25,7 +25,7 @@ def vacancy_request_hh(vacancy, url):
     return vacancies
 
 
-def vacancy_request_sj(vacancy, url):
+def get_vacansies_sj(language, url):
     page = 0
     pages_number = 100
     vacancies = []
@@ -38,7 +38,7 @@ def vacancy_request_sj(vacancy, url):
         }
         payload = {
             'page': page,
-            'keywords': vacancy
+            'keywords': language
         }
         page_response = requests.get(url, params=payload, headers=headers)
         page_response.raise_for_status()
@@ -60,18 +60,18 @@ def predict_salary(salary_from, salary_to):
         return int(salary_to * 0.8)
 
 
-def predict_rub_salary_hh(vacancy_response):
+def predict_rub_salary_hh(vacancies):
     salaries = []
-    for vacancy in vacancy_response:
+    for vacancy in vacancies:
         vacancy_salary = vacancy.get('salary')
         if vacancy_salary and vacancy_salary.get('currency') == 'RUR':
             salaries.append(predict_salary(vacancy_salary.get('from'), vacancy_salary.get('to')))
     return salaries
    
    
-def predict_rub_salary_sj(vacancy_response):
+def predict_rub_salary_sj(vacancies):
     salaries = []
-    for vacancy in vacancy_response:
+    for vacancy in vacancies:
         if (vacancy.get('payment_from') or vacancy.get('payment_to')) and vacancy.get('currency') == 'rub':
             salaries.append(predict_salary(vacancy.get('payment_from'), vacancy.get('payment_to')))
     return salaries
@@ -80,15 +80,14 @@ def predict_rub_salary_sj(vacancy_response):
 def get_statistics_hh(languages, job_statistics):
     job_statistics['HeadHunter Moscow'] = {}
     for language in languages:
-        language_request = vacancy_request_hh(language, 'https://api.hh.ru/vacancies')
+        vacancies = get_vacansies_hh(language, 'https://api.hh.ru/vacancies')
         page_salaries_lenght = 0
         page_salaries_sum = 0
-        for request_page in language_request:
+        for request_page in vacancies:
             page_salaries = predict_rub_salary_hh(request_page['items'])
             page_salaries_sum += sum(page_salaries)
             page_salaries_lenght += len(page_salaries)
-        vacancies_found = language_request[0]['found']
-
+        vacancies_found = vacancies[0]['found']
         job_statistics['HeadHunter Moscow'][language] = {
             'vacancies_found': vacancies_found,
             'vacancies_processed': page_salaries_lenght,
@@ -99,14 +98,14 @@ def get_statistics_hh(languages, job_statistics):
 def get_statistics_sj(languages, job_statistics):
     job_statistics['SuperJob Moscow'] = {}
     for language in languages:
-        language_request = vacancy_request_sj(language, 'https://api.superjob.ru/2.0/vacancies/')
+        vacancies = get_vacansies_sj(language, 'https://api.superjob.ru/2.0/vacancies/')
         page_salaries_lenght = 0
         page_salaries_sum = 0
-        for request_page in language_request:
+        for request_page in vacancies:
             page_salaries = predict_rub_salary_sj(request_page['objects'])
             page_salaries_sum += sum(page_salaries)
             page_salaries_lenght += len(page_salaries)
-        vacancies_found = language_request[0]['total']
+        vacancies_found = vacancies[0]['total']
 
         job_statistics['SuperJob Moscow'][language] = {
             'vacancies_found': vacancies_found,
