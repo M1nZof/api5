@@ -25,7 +25,7 @@ def get_vacansies_hh(language, url):
     return vacancies
 
 
-def get_vacansies_sj(language, url):
+def get_vacansies_sj(language, url, sj_key):
     page = 0
     pages_number = 100
     vacancies = []
@@ -98,10 +98,10 @@ def get_statistics_hh(languages, job_statistics):
             }
 
 
-def get_statistics_sj(languages, job_statistics):
+def get_statistics_sj(languages, job_statistics, sj_key):
     job_statistics['SuperJob Moscow'] = {}
     for language in languages:
-        vacancies = get_vacansies_sj(language, 'https://api.superjob.ru/2.0/vacancies/')
+        vacancies = get_vacansies_sj(language, 'https://api.superjob.ru/2.0/vacancies/', sj_key)
         page_salaries_lenght = 0
         page_salaries_sum = 0
         for request_page in vacancies:
