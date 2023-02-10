@@ -78,6 +78,7 @@ def predict_rub_salary_sj(vacancy_response):
 
    
 def get_statistics_hh(languages, job_statistics):
+    job_statistics['HeadHunter Moscow'] = {}
     for language in languages:
         language_request = vacancy_request_hh(language, 'https://api.hh.ru/vacancies')
         page_salaries_lenght = 0
@@ -87,16 +88,16 @@ def get_statistics_hh(languages, job_statistics):
             page_salaries_sum += sum(page_salaries)
             page_salaries_lenght += len(page_salaries)
         vacancies_found = language_request[0]['found']
-        
-        vacancies_salaries_hh_and_sj['HeadHunter Moscow'][language] = {
+
+        job_statistics['HeadHunter Moscow'][language] = {
             'vacancies_found': vacancies_found,
             'vacancies_processed': page_salaries_lenght,
             'average_salary': int(page_salaries_sum / page_salaries_lenght)
             }
-    return vacancies_salaries_hh_and_sj
 
 
 def get_statistics_sj(languages, job_statistics):
+    job_statistics['SuperJob Moscow'] = {}
     for language in languages:
         language_request = vacancy_request_sj(language, 'https://api.superjob.ru/2.0/vacancies/')
         page_salaries_lenght = 0
@@ -106,13 +107,12 @@ def get_statistics_sj(languages, job_statistics):
             page_salaries_sum += sum(page_salaries)
             page_salaries_lenght += len(page_salaries)
         vacancies_found = language_request[0]['total']
-        
-        vacancies_salaries_hh_and_sj['SuperJob Moscow'][language] = {
+
+        job_statistics['SuperJob Moscow'][language] = {
             'vacancies_found': vacancies_found,
             'vacancies_processed': page_salaries_lenght,
             'average_salary': int(page_salaries_sum / page_salaries_lenght)
             }
-    return vacancies_salaries_hh_and_sj
 
 
 if __name__ == '__main__':
@@ -120,10 +120,6 @@ if __name__ == '__main__':
     sj_key = os.environ['SJ_KEY']
 
     languages = ['Python', 'JS', 'Java', 'Ruby', 'PHP', 'C', 'CSS', 'GO']
-    vacancies_salaries_hh_and_sj = {
-        'HeadHunter Moscow': {},
-        'SuperJob Moscow': {}
-    }
 
     for job_area in [get_statistics_hh(), get_statistics_sj()]:
         for key, languages in job_area.items():
@@ -137,3 +133,4 @@ if __name__ == '__main__':
             table = AsciiTable(table_data=table_data, title=key)
             print(table.table)
             del table, table_data
+    job_statistics = {}
