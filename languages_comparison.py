@@ -131,9 +131,9 @@ if __name__ == '__main__':
                 ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата'],
             ]
             for language, values in languages.items():
-                language_data = [language, values['vacancies_found'],
+                language_results = [language, values['vacancies_found'],
                                  values['vacancies_processed'], values['average_salary']]
-                table_data.append(language_data)
+                table_data.append(language_results)
             table = AsciiTable(table_data=table_data, title=key)
             print(table.table)
             del table, table_data
