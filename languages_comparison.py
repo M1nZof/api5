@@ -77,7 +77,7 @@ def predict_rub_salary_sj(vacancy_response):
     return salaries
 
    
-def get_statistics_hh():
+def get_statistics_hh(languages, job_statistics):
     for language in languages:
         language_request = vacancy_request_hh(language, 'https://api.hh.ru/vacancies')
         page_salaries_lenght = 0
@@ -96,7 +96,7 @@ def get_statistics_hh():
     return vacancies_salaries_hh_and_sj
 
 
-def get_statistics_sj():
+def get_statistics_sj(languages, job_statistics):
     for language in languages:
         language_request = vacancy_request_sj(language, 'https://api.superjob.ru/2.0/vacancies/')
         page_salaries_lenght = 0
