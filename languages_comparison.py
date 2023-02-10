@@ -88,12 +88,12 @@ def get_statistics_hh():
             page_salaries_lenght += len(page_salaries)
         vacancies_found = language_request[0]['found']
         
-        vacancies_salaries['HeadHunter Moscow'][language] = {
+        vacancies_salaries_hh_and_sj['HeadHunter Moscow'][language] = {
             'vacancies_found': vacancies_found,
             'vacancies_processed': page_salaries_lenght,
             'average_salary': int(page_salaries_sum / page_salaries_lenght)
             }
-    return vacancies_salaries
+    return vacancies_salaries_hh_and_sj
 
 
 def get_statistics_sj():
@@ -107,12 +107,12 @@ def get_statistics_sj():
             page_salaries_lenght += len(page_salaries)
         vacancies_found = language_request[0]['total']
         
-        vacancies_salaries['SuperJob Moscow'][language] = {
+        vacancies_salaries_hh_and_sj['SuperJob Moscow'][language] = {
             'vacancies_found': vacancies_found,
             'vacancies_processed': page_salaries_lenght,
             'average_salary': int(page_salaries_sum / page_salaries_lenght)
             }
-    return vacancies_salaries
+    return vacancies_salaries_hh_and_sj
 
 
 if __name__ == '__main__':
@@ -121,7 +121,7 @@ if __name__ == '__main__':
 
     languages = ['Python', 'JS', 'Java', 'Ruby', 'PHP', 'C', 'CSS', 'GO']
     quantity_of_vacancies = {}
-    vacancies_salaries = {
+    vacancies_salaries_hh_and_sj = {
         'HeadHunter Moscow': {},
         'SuperJob Moscow': {}
     }
