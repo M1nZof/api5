@@ -132,17 +132,9 @@ if __name__ == '__main__':
     sj_key = os.environ['SJ_KEY']
 
     languages = ['Python', 'JS', 'Java', 'Ruby', 'PHP', 'C', 'CSS', 'GO']
-
-    for job_area in [get_statistics_hh(), get_statistics_sj()]:
-        for key, languages in job_area.items():
-            table_data = [
-                ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата'],
-            ]
-            for language, values in languages.items():
-                language_results = [language, values['vacancies_found'],
-                                 values['vacancies_processed'], values['average_salary']]
-                table_data.append(language_results)
-            table = AsciiTable(table_data=table_data, title=key)
-            print(table.table)
-            del table, table_data
     job_statistics = {}
+    
+    get_statistics_hh(languages, job_statistics) 
+    get_statistics_sj(languages, job_statistics)
+    
+    print_tables(job_statistics)
