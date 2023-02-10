@@ -115,6 +115,18 @@ def get_statistics_sj(languages, job_statistics):
             }
 
 
+def print_tables(job_statistics):
+    for job_area, language in job_statistics.items():
+        table_data = [
+                ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата'],
+            ]    
+        for language_name, language_results in language.items():
+            language_packed_results = [language_name, language_results['vacancies_found'],
+                                      language_results['vacancies_processed'], language_results['average_salary']]
+            table_data.append(language_packed_results)
+        table = AsciiTable(table_data=table_data, title=job_area)
+        print(table.table)
+
 if __name__ == '__main__':
     load_dotenv()
     sj_key = os.environ['SJ_KEY']
