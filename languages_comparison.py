@@ -87,13 +87,14 @@ def get_statistics_hh(languages, job_area_statistic):
             page_salaries_sum += sum(page_salaries)
             page_salaries_lenght += len(page_salaries)
         vacancies_found = vacancies[0]['found']
-        
-        average_salary = int(page_salaries_sum / page_salaries_lenght) if page_salaries_lenght != 0 else None 
-        
-        job_statistics['HeadHunter Moscow'][language] = {
+        try:
+            average_salary = page_salaries_sum / page_salaries_lenght
+        except ZeroDivisionError:
+            continue
+        job_area_statistic[language] = {
             'vacancies_found': vacancies_found,
             'vacancies_processed': page_salaries_lenght,
-            'average_salary': average_salary
+            'average_salary': int(average_salary)
             }
 
 
@@ -107,13 +108,15 @@ def get_statistics_sj(languages, job_area_statistic, sj_key):
             page_salaries_sum += sum(page_salaries)
             page_salaries_lenght += len(page_salaries)
         vacancies_found = vacancies[0]['total']
-
-        average_salary = int(page_salaries_sum / page_salaries_lenght) if page_salaries_lenght != 0 else None 
+        try:
+            average_salary = page_salaries_sum / page_salaries_lenght
+        except ZeroDivisionError:
+            continue
 
         job_area_statistic[language] = {
             'vacancies_found': vacancies_found,
             'vacancies_processed': page_salaries_lenght,
-            'average_salary': average_salary
+            'average_salary': int(average_salary)
             }
 
 
