@@ -65,7 +65,9 @@ def predict_rub_salary_hh(vacancies):
     for vacancy in vacancies:
         vacancy_salary = vacancy.get('salary')
         if vacancy_salary and vacancy_salary.get('currency') == 'RUR':
-            salaries.append(predict_salary(vacancy_salary.get('from'), vacancy_salary.get('to')))
+            predicted_salary = predict_salary(vacancy_salary.get('from'), vacancy_salary.get('to'))
+            if predicted_salary:
+                salaries.append(predict_salary(vacancy_salary.get('from'), vacancy_salary.get('to')))
     return salaries
    
    
