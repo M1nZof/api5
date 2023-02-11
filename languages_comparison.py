@@ -77,8 +77,7 @@ def predict_rub_salary_sj(vacancies):
     return salaries
 
    
-def get_statistics_hh(languages, job_statistics):
-    job_statistics['HeadHunter Moscow'] = {}
+def get_statistics_hh(languages, job_area_statistic):
     for language in languages:
         vacancies = get_vacansies_hh(language, 'https://api.hh.ru/vacancies')
         page_salaries_lenght = 0
@@ -98,8 +97,7 @@ def get_statistics_hh(languages, job_statistics):
             }
 
 
-def get_statistics_sj(languages, job_statistics, sj_key):
-    job_statistics['SuperJob Moscow'] = {}
+def get_statistics_sj(languages, job_area_statistic, sj_key):
     for language in languages:
         vacancies = get_vacansies_sj(language, 'https://api.superjob.ru/2.0/vacancies/', sj_key)
         page_salaries_lenght = 0
@@ -112,7 +110,7 @@ def get_statistics_sj(languages, job_statistics, sj_key):
 
         average_salary = int(page_salaries_sum / page_salaries_lenght) if page_salaries_lenght != 0 else None 
 
-        job_statistics['SuperJob Moscow'][language] = {
+        job_area_statistic[language] = {
             'vacancies_found': vacancies_found,
             'vacancies_processed': page_salaries_lenght,
             'average_salary': average_salary
@@ -136,9 +134,15 @@ if __name__ == '__main__':
     sj_key = os.environ['SJ_KEY']
 
     languages = ['Python', 'JS', 'Java', 'Ruby', 'PHP', 'C', 'CSS', 'GO']
-    job_statistics = {}
+    job_statistics = {
+        'HeadHunter Moscow': {},
+        'SuperJob Moscow': {}
+    }
     
-    get_statistics_hh(languages, job_statistics) 
-    get_statistics_sj(languages, job_statistics)
+    job_statistics['HeadHunter Moscow'] = {}
+    job_statistics['SuperJob Moscow'] = {}
+    
+    get_statistics_hh(languages, job_statistics['HeadHunter Moscow']) 
+    get_statistics_sj(languages, job_statistics['SuperJob Moscow'], sj_key)
     
     print_tables(job_statistics)
