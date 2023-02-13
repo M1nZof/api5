@@ -67,7 +67,7 @@ def predict_rub_salary_hh(vacancies):
         if vacancy_salary and vacancy_salary.get('currency') == 'RUR':
             predicted_salary = predict_salary(vacancy_salary.get('from'), vacancy_salary.get('to'))
             if predicted_salary:
-                salaries.append(predict_salary(vacancy_salary.get('from'), vacancy_salary.get('to')))
+                salaries.append(predicted_salary)
     return salaries
    
    
@@ -79,7 +79,8 @@ def predict_rub_salary_sj(vacancies):
     return salaries
 
    
-def get_statistics_hh(languages, job_area_statistic):
+def get_statistics_hh(languages):
+    hh_statistics = {}
     for language in languages:
         vacancies = get_vacansies_hh(language, 'https://api.hh.ru/vacancies')
         page_salaries_lenght = 0
@@ -93,14 +94,17 @@ def get_statistics_hh(languages, job_area_statistic):
             average_salary = page_salaries_sum / page_salaries_lenght
         except ZeroDivisionError:
             continue
-        job_area_statistic[language] = {
+            
+        hh_statistics[language] = {
             'vacancies_found': vacancies_found,
             'vacancies_processed': page_salaries_lenght,
             'average_salary': int(average_salary)
             }
+    return hh_statistics
 
 
-def get_statistics_sj(languages, job_area_statistic, sj_key):
+def get_statistics_sj(languages, sj_key):
+    sj_statistics = {}
     for language in languages:
         vacancies = get_vacansies_sj(language, 'https://api.superjob.ru/2.0/vacancies/', sj_key)
         page_salaries_lenght = 0
@@ -115,39 +119,39 @@ def get_statistics_sj(languages, job_area_statistic, sj_key):
         except ZeroDivisionError:
             continue
 
-        job_area_statistic[language] = {
+        sj_statistics[language] = {
             'vacancies_found': vacancies_found,
             'vacancies_processed': page_salaries_lenght,
             'average_salary': int(average_salary)
             }
+    return sj_statistics
+    
 
-
-def print_tables(job_statistics):
-    for job_area, language in job_statistics.items():
-        table_rows = [
-                ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата'],
-            ]    
-        for language_name, language_results in language.items():
-            language_packed_results = [language_name, language_results['vacancies_found'],
-                                      language_results['vacancies_processed'], language_results['average_salary']]
-            table_rows.append(language_packed_results)
-        table = AsciiTable(table_data=table_rows, title=job_area)
-        print(table.table)
+def print_tables(*job_statistics):
+    for job_areas in job_statistics:
+        for job_area, language in job_areas.items():
+            table_rows = [
+                    ['Язык программирования', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата'],
+                ]    
+            for language_name, language_results in language.items():
+                language_packed_results = [language_name, language_results['vacancies_found'],
+                                          language_results['vacancies_processed'], language_results['average_salary']]
+                table_rows.append(language_packed_results)
+            table = AsciiTable(table_data=table_rows, title=job_area)
+            print(table.table)
 
 if __name__ == '__main__':
     load_dotenv()
     sj_key = os.environ['SJ_KEY']
 
     languages = ['Python', 'JS', 'Java', 'Ruby', 'PHP', 'C', 'CSS', 'GO']
+    
+    hh_statistics = get_statistics_hh(languages) 
+    sj_statistics = get_statistics_sj(languages, sj_key)
+    
     job_statistics = {
-        'HeadHunter Moscow': {},
-        'SuperJob Moscow': {}
+        'HeadHunter Moscow': hh_statistics,
+        'SuperJob Moscow': sj_statistics
     }
-    
-    job_statistics['HeadHunter Moscow'] = {}
-    job_statistics['SuperJob Moscow'] = {}
-    
-    get_statistics_hh(languages, job_statistics['HeadHunter Moscow']) 
-    get_statistics_sj(languages, job_statistics['SuperJob Moscow'], sj_key)
     
     print_tables(job_statistics)
